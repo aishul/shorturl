@@ -31,47 +31,38 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    ShortUrl
+                    ShortUrl Custom Code
                 </div>
-                @if (Session::has('noCode'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ Session::get('noCode') }}
-                        <button type="button" class="close" id="btn" data-clipboard-text="{{ Session::get('noCode') }}" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                @endif
                 <div class="panel-body">
                     <form class="form-horizontal" method="POST" action="{{ route('link.store') }}">
                         {{ csrf_field() }}
+                        <input type="hidden" id="custom" name="custom" value="custom" />
 
                         <div class="form-group{{ $errors->has('url') ? ' has-error' : '' }}">
-                            <div class="input-group mb-3">
-                                <input id="url" type="text" class="form-control" name="url" value="{{ old('url') }}" placeholder="type your url here" aria-label="type your url here" aria-describedby="basic-addon2" required autofocus>
-                                @if ($errors->has('url'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('url') }}</strong>
-                                    </span>
-                                @endif
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit">Short The URL</button>
-                                </div>
-                            </div>
+                            <label for="url">Website Link</label>
+                            <input id="url" type="text" class="form-control" name="url" value="{{ old('url') }}" placeholder="type your url here" aria-label="type your url here" aria-describedby="basic-addon2" required autofocus>
+                            <small id="urlHelp" class="form-text text-muted">make sure to include full link with http/https, otherwise the redirect link will be using http.</small>
+                            @if ($errors->has('url'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('url') }}</strong>
+                                </span>
+                            @endif
                         </div>
+
+                        <div class="form-group{{ $errors->has('code') ? ' has-error' : '' }}">
+                            <label for="code">Custom Code</label>
+                            <input id="code" type="text" class="form-control" name="code" value="{{ old('code') }}" placeholder="type your custom code" aria-label="type your custom code" aria-describedby="basic-addon2" required autofocus>
+                            <small id="codeHelp" class="form-text text-muted">use proper word to define the link in short. eg Event2018, PropertyLaunching.</small>
+                            @if ($errors->has('code'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('code') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Create URL</button>
                     </form>
                 </div>
-                <div class="panel-body">
-                    <a class="btn btn-outline-primary btn-block" href="{{ route('link.create') }}" role="button">Get Custom Code</a>
-                </div>
-                @if (Session::has('url'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        Url Shortened
-                        <button type="button" class="close" id="btn" data-clipboard-text="{{ (string)URL::current() }}/{{ Session::get('url') }}" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    Your Shortened Url <a href="{{ (string)URL::current() }}/{{ Session::get('url') }}"> {{ (string)URL::current() }}/{{ Session::get('url') }}</a>
-                @endif
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

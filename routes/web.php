@@ -16,7 +16,12 @@
 // });
 
 Route::get('/', 'LinksController@index')->name('home');
+Route::get('/dashboard/link/create', 'LinksController@create')->name('link.create');
 Route::post('/store', 'LinksController@store')->name('link.store');
-Route::get('/{code}', 'LinksController@show', function ($code) {
-	// 
+Route::get('/{code}', 'LinksController@show', function ($code){
+
 })->name('link.show');
+Route::get('/dashboard/stats/{filter}', 'LinksController@stats', function ($filter){
+
+})->name('stats');
+Route::get('/success', 'LinksController@success')->name('link.success');

@@ -29,7 +29,7 @@ class LinksController extends Controller
      */
     public function create()
     {
-        //
+        return view('links.create');
     }
 
     /**
@@ -40,10 +40,6 @@ class LinksController extends Controller
      */
     public function store(Request $request)
     {
-        // validate
-        // $rules = array(
-        //     'url' => "required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/",
-        // );
         $rules = array(
             'url' => "required",
         );
@@ -72,8 +68,17 @@ class LinksController extends Controller
             // store
             $link = new Links;
             $link->url = $urlStr;
-            $link->code = $code;
             $link->clicks = 0;
+            $link->code = $code;
+
+            // if custom code form
+            if (Input::get('custom'))
+            {
+                $link->code = Input::get('code');
+                $link->save();
+                return Redirect::to('/dashboard/stats/latest');
+            }
+
             $link->save();
 
             // flash messages
@@ -95,11 +100,20 @@ class LinksController extends Controller
      */
     public function show($code)
     {
-        Links::query()->where('code', $code)->update([
-            'clicks' => \DB::raw('clicks + 1')
-            ]);
-        $link = Links::where('code', $code)->get();
-        return Redirect::to($link[0]->url);
+        // Links::query()->where('code', $code)->update([
+        //     'clicks' => \DB::raw('clicks + 1')
+        //     ]);
+        // $link = Links::where('code', $code)->get();
+        $link = Links::where(\DB::raw('BINARY `code`'), $code)->first();
+        if($link)
+        {
+            Links::query()->where(\DB::raw('BINARY `code`'), $code)->update([
+                'clicks' => \DB::raw('clicks + 1')
+                ]);
+            return Redirect::to($link->url);
+        }
+        Session::flash('noCode', 'No URL found');
+        return Redirect::to('/');
     }
 
     /**
@@ -134,5 +148,20 @@ class LinksController extends Controller
     public function destroy(Links $links)
     {
         //
+    }
+
+    public function stats($filter)
+    {
+        $links = Links::orderBy('clicks', 'desc')->take(20)->get();
+        if ($filter == "latest")
+        {
+            $links = Links::orderBy('created_at', 'desc')->take(20)->get();
+        }
+        return view('links.stats', ['links' => $links, 'filter' => $filter]);
+    }
+
+    public function success()
+    {
+        return view('links.success');
     }
 }
