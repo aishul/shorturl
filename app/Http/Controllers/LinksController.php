@@ -42,7 +42,7 @@ class LinksController extends Controller
     {
         // validate
         $rules = array(
-            'url' => 'required',
+            'url' => "required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/",
         );
         $validator = Validator::make(Input::all(), $rules);
 
