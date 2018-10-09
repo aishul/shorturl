@@ -46,7 +46,7 @@ class LinksController extends Controller
         );
         $validator = Validator::make(Input::all(), $rules);
 
-        // process the login
+        // validate request
         if ($validator->fails()) {
             return Redirect::to('/')
                 ->withErrors($validator)
