@@ -41,9 +41,13 @@ class LinksController extends Controller
     public function store(Request $request)
     {
         // validate
+        // $rules = array(
+        //     'url' => "required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/",
+        // );
         $rules = array(
-            'url' => "required|regex:/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/",
+            'url' => "required",
         );
+
         $validator = Validator::make(Input::all(), $rules);
 
         // validate request
@@ -58,10 +62,18 @@ class LinksController extends Controller
             // final url
             $finalUrl = URL::current();
 
+            // add http
+            $urlStr = Input::get('url');
+            $parsed = parse_url(Input::get('url'));
+            if (empty($parsed['scheme'])) {
+                $urlStr = 'http://' . ltrim($urlStr, '/');
+            }
+
             // store
             $link = new Links;
-            $link->url = Input::get('url');
+            $link->url = $urlStr;
             $link->code = $code;
+            $link->clicks = 0;
             $link->save();
 
             // flash messages
