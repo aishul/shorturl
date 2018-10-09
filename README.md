@@ -1,2 +1,1 @@
-# list of packages
-https://github.com/leadthread/laravel-shortener
+laravel url shortener with clicks tracking
